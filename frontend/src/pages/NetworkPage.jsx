@@ -4,8 +4,11 @@ import Sidebar from "../components/Sidebar";
 import { UserPlus } from "lucide-react";
 import FriendRequest from "../components/FriendRequest";
 import UserCard from "../components/UserCard";
+import { useNavigate } from "react-router-dom";
 
 const NetworkPage = () => {
+	const navigate = useNavigate();
+
 	const { data: user } = useQuery({ queryKey: ["authUser"] });
 
 	const { data: connectionRequests } = useQuery({
@@ -17,6 +20,10 @@ const NetworkPage = () => {
 		queryKey: ["connections"],
 		queryFn: () => axiosInstance.get("/connections"),
 	});
+
+	const handleProfileClick = (userId) => {
+		navigate(`/profile/${userId}`);
+	};
 
 	return (
 		<div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
@@ -48,12 +55,18 @@ const NetworkPage = () => {
 							</p>
 						</div>
 					)}
+
 					{connections?.data?.length > 0 && (
 						<div className='mb-8'>
 							<h2 className='text-xl font-semibold mb-4'>My Connections</h2>
 							<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
 								{connections.data.map((connection) => (
-									<UserCard key={connection._id} user={connection} isConnection={true} />
+									<UserCard
+										key={connection._id}
+										user={connection}
+										isConnection={true}
+										onClick={() => handleProfileClick(connection._id)} // Added profile click
+									/>
 								))}
 							</div>
 						</div>
